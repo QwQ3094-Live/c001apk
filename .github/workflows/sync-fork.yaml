@@ -1,0 +1,31 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 * * * *' # 每小时执行一次
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'Rzdpai/c001apk'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: 'main'
+
+      - name: Configure Git user
+        run: |
+          git config user.email "3420176748@qq.com"
+          git config user.name "RzdPai"
+
+      - name: Fetch latest changes from the source repository
+        run: |
+          git fetch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/bggRGjQaUbCoE/c001apk-flutter.git main
+          git merge FETCH_HEAD --allow-unrelated-histories
+
+      - name: Push changes to the target repository
+        run: |
+          git push origin dev

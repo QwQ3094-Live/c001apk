@@ -24,7 +24,7 @@ jobs:
       - name: Fetch latest changes from the source repository
         run: |
           git fetch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/bggRGjQaUbCoE/c001apk-flutter.git main
-          git merge FETCH_HEAD --allow-unrelated-histories
+          git merge FETCH_HEAD --allow-unrelated-histories --strategy-option theirs
 
       - name: Push changes to the target repository
         run: |

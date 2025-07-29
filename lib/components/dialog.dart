@@ -187,15 +187,15 @@ class ClearDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Center(child: Text('Clear Cache')),
-      content: Text('current cache size: $cacheSize'),
+      title: const Center(child: Text('清除缓存')),
+      content: Text('当前缓存大小: $cacheSize'),
       actions: [
         TextButton(
-          child: const Text('Cancel'),
+          child: const Text('取消'),
           onPressed: () => Get.back(),
         ),
         TextButton(
-          child: const Text('OK'),
+          child: const Text('确定'),
           onPressed: () {
             onClearCache();
             Get.back();

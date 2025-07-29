@@ -144,11 +144,11 @@ class _SettingsPageState extends State<SettingsPage>
             items: [
               DropdownMenuItem<int>(
                 value: 1,
-                child: Text('Always Off'),
+                child: Text('关闭'),
               ),
               DropdownMenuItem<int>(
                 value: 2,
-                child: Text('Always On'),
+                child: Text('开启'),
               ),
               DropdownMenuItem<int>(
                 value: 0,
@@ -278,7 +278,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           Obx(
             () => ListTile(
-              title: const Text('清楚缓存'),
+              title: const Text('清除缓存'),
               subtitle: _settingsController.cacheSize.value.isNotEmpty
                   ? Text(_settingsController.cacheSize.value)
                   : null,

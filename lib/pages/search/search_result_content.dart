@@ -89,15 +89,15 @@ class _SearchResultContentState extends State<SearchResultContent>
             '${widget.keyword}${widget.title}${widget.pageType}${widget.pageParam}${widget.random}');
     _searchOrderController.searchType.listen((type) {
       _searchController.feedType = switch (type) {
-        SearchType.ALL => '全部',
-        SearchType.FEED => '头条',
-        SearchType.ARTICLE => '头条文章',
-        SearchType.COOLPIC => '图片',
-        SearchType.COMMENT => '评论',
-        SearchType.RATING => '等级',
-        SearchType.ANSWER => '回答',
-        SearchType.QUESTION => '问题',
-        SearchType.VOTE => '投票',
+        SearchType.ALL => 'all',
+        SearchType.FEED => 'feed',
+        SearchType.ARTICLE => 'feedArticle',
+        SearchType.COOLPIC => 'picture',
+        SearchType.COMMENT => 'comment',
+        SearchType.RATING => 'rating',
+        SearchType.ANSWER => 'answer',
+        SearchType.QUESTION => 'question',
+        SearchType.VOTE => 'vote',
       };
       onOrderSearch();
     });

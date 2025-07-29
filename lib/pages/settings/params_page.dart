@@ -32,7 +32,7 @@ class _ParamsPageState extends State<ParamsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Params'),
+        title: const Text('参数'),
         leading: const BackButton(),
       ),
       body: ListView(

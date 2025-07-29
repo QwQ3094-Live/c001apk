@@ -103,7 +103,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           ListTile(
             leading: const Icon(Icons.developer_mode),
-            title: const Text('Params'),
+            title: const Text('参数'),
             onTap: () => Get.toNamed('/params'),
           ),
           // Theme

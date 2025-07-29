@@ -90,14 +90,14 @@ class _ReplyDialogState extends State<ReplyDialog> with WidgetsBindingObserver {
     _focuslistener();
   }
 
-  _autoFocus() async {
+  void _autoFocus() async {
     await Future.delayed(const Duration(milliseconds: 300));
     if (mounted) {
       _replyContentFocusNode.requestFocus();
     }
   }
 
-  _focuslistener() {
+  void _focuslistener() {
     _replyContentFocusNode.addListener(() {
       if (_replyContentFocusNode.hasFocus) {
         // _keyBoardKey.currentState?.updateSelected(true);
@@ -399,7 +399,7 @@ class _ReplyDialogState extends State<ReplyDialog> with WidgetsBindingObserver {
           ),
           Divider(
             height: 1,
-            color: Theme.of(context).dividerColor.withOpacity(0.1),
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
           ),
           Container(
             height: 52,
@@ -632,7 +632,7 @@ class Debouncer {
 
   Debouncer({this.milliseconds});
 
-  run(DebounceCallback callback) {
+  void run(DebounceCallback callback) {
     if (_timer != null) {
       _timer!.cancel();
     }

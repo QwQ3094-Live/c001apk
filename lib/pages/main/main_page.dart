@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:android_intent_plus/android_intent.dart';
-import 'package:android_intent_plus/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -13,6 +11,7 @@ import '../../pages/main/main_controller.dart';
 import '../../pages/message/message_page.dart';
 import '../../pages/settings/settings_page.dart';
 import '../../utils/storage_util.dart';
+import '../../utils/utils.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -47,16 +46,7 @@ class _MainPageState extends State<MainPage> {
     if (_selectedIndex != 0) {
       onDestinationSelected(0);
     } else {
-      if (Platform.isAndroid) {
-        AndroidIntent intent = const AndroidIntent(
-          action: 'android.intent.action.MAIN',
-          flags: [Flag.FLAG_ACTIVITY_NEW_TASK],
-          category: 'android.intent.category.HOME',
-        );
-        await intent.launch();
-      } else {
-        SystemNavigator.pop();
-      }
+      SystemNavigator.pop();
     }
   }
 
@@ -72,17 +62,17 @@ class _MainPageState extends State<MainPage> {
       NavigationDestination(
         selectedIcon: Icon(Icons.home),
         icon: Icon(Icons.home_outlined),
-        label: 'Home',
+        label: '主页',
       ),
       NavigationDestination(
         selectedIcon: Icon(Icons.message),
         icon: Icon(Icons.message_outlined),
-        label: 'Message',
+        label: '消息',
       ),
       NavigationDestination(
         selectedIcon: Icon(Icons.settings),
         icon: Icon(Icons.settings_outlined),
-        label: 'Settings',
+        label: '设置',
       ),
     ];
 
@@ -90,17 +80,17 @@ class _MainPageState extends State<MainPage> {
       NavigationRailDestination(
         selectedIcon: Icon(Icons.home),
         icon: Icon(Icons.home_outlined),
-        label: Text('Home'),
+        label: Text('主页'),
       ),
       NavigationRailDestination(
         selectedIcon: Icon(Icons.message),
         icon: Icon(Icons.message_outlined),
-        label: Text('Message'),
+        label: Text('消息'),
       ),
       NavigationRailDestination(
         selectedIcon: Icon(Icons.settings),
         icon: Icon(Icons.settings_outlined),
-        label: Text('Settings'),
+        label: Text('设置'),
       ),
     ];
 
@@ -110,30 +100,37 @@ class _MainPageState extends State<MainPage> {
         onBackPressed();
       },
       child: LayoutBuilder(
-        builder: (_, constriants) {
-          bool isPortait = constriants.maxHeight > constriants.maxWidth;
-
+        builder: (context, _) {
           return Scaffold(
             body: Row(children: [
-              if (!isPortait)
+              if (!Utils.isPortrait(context))
                 StreamBuilder(
-                  initialData: _selectedIndex,
-                  stream: _indexSctream.stream,
-                  builder: (_, snapshot) => NavigationRail(
-                    destinations: railDestinations,
-                    selectedIndex: snapshot.data,
-                    onDestinationSelected: onDestinationSelected,
-                  ),
-                ),
+                    initialData: _selectedIndex,
+                    stream: _indexSctream.stream,
+                    builder: (_, snapshot) => Padding(
+                          padding: EdgeInsets.only(
+                              top: Platform.isMacOS ? 25.0 : 10.0),
+                          child: NavigationRail(
+                            destinations: railDestinations,
+                            selectedIndex: snapshot.data!,
+                            onDestinationSelected: onDestinationSelected,
+                            labelType: NavigationRailLabelType.none,
+                            extended: true,
+                          ),
+                        )),
+              if (!Utils.isPortrait(context)) const VerticalDivider(width: 1),
+              if (Utils.isWideLandscape(context)) const Spacer(),
               Expanded(
+                flex: 8,
                 child: PageView(
                   physics: const NeverScrollableScrollPhysics(),
                   controller: _contrller,
                   children: pages,
                 ),
               ),
+              if (Utils.isWideLandscape(context)) const Spacer(),
             ]),
-            bottomNavigationBar: isPortait
+            bottomNavigationBar: Utils.isPortrait(context)
                 ? StreamBuilder(
                     initialData: _selectedIndex,
                     stream: _indexSctream.stream,

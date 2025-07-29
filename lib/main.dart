@@ -12,6 +12,7 @@ import 'constants/constants.dart';
 import 'logic/network/request.dart';
 import 'router/app_pages.dart';
 import 'utils/storage_util.dart';
+import 'utils/utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,13 +22,13 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+  if (Utils.isDesktop) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(
       minimumSize: const Size(400, 700),
-      size: const Size(400, 700),
       center: true,
       skipTaskbar: false,
+      title: 'c001apk',
       titleBarStyle:
           Platform.isMacOS ? TitleBarStyle.hidden : TitleBarStyle.normal,
     );
@@ -113,11 +114,11 @@ class C001APKAPP extends StatelessWidget {
           popupMenuTheme: PopupMenuThemeData(
             surfaceTintColor: lightColorScheme.surfaceTint,
           ),
-          cardTheme: CardTheme(
+          cardTheme: CardThemeData(
             surfaceTintColor: lightColorScheme.surfaceTint,
             shadowColor: Colors.transparent,
           ),
-          dialogTheme: DialogTheme(
+          dialogTheme: DialogThemeData(
             surfaceTintColor: lightColorScheme.surfaceTint,
           ),
           inputDecorationTheme: InputDecorationTheme(
@@ -144,11 +145,11 @@ class C001APKAPP extends StatelessWidget {
           popupMenuTheme: PopupMenuThemeData(
             surfaceTintColor: darkColorScheme.surfaceTint,
           ),
-          cardTheme: CardTheme(
+          cardTheme: CardThemeData(
             surfaceTintColor: darkColorScheme.surfaceTint,
             shadowColor: Colors.transparent,
           ),
-          dialogTheme: DialogTheme(
+          dialogTheme: DialogThemeData(
             surfaceTintColor: darkColorScheme.surfaceTint,
           ),
           inputDecorationTheme: InputDecorationTheme(

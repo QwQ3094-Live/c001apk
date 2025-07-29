@@ -41,31 +41,31 @@ class _ParamsPageState extends State<ParamsPage> {
         ),
         children: [
           EdittextItem(
-            title: 'Version Name',
+            title: '版本号',
             boxKey: SettingsBoxKey.versionName,
             needUpdateUserAgent: true,
             onChanged: _paramsController.onChanged,
           ),
           const EdittextItem(
-            title: 'Api Version',
+            title: 'Api版本',
             boxKey: SettingsBoxKey.apiVersion,
           ),
           EdittextItem(
-            title: 'Version Code',
+            title: '版本代码',
             boxKey: SettingsBoxKey.versionCode,
             needUpdateUserAgent: true,
             onChanged: _paramsController.onChanged,
           ),
           EdittextItem(
             key: manufacturerKey,
-            title: 'Manufacturer',
+            title: '制作商',
             boxKey: SettingsBoxKey.manufacturer,
             needUpdateXAppDevice: true,
             onChanged: () => _paramsController.onChanged(true),
           ),
           EdittextItem(
             key: brandKey,
-            title: 'Brand',
+            title: '品牌',
             boxKey: SettingsBoxKey.brand,
             needUpdateUserAgent: true,
             needUpdateXAppDevice: true,
@@ -73,7 +73,7 @@ class _ParamsPageState extends State<ParamsPage> {
           ),
           EdittextItem(
             key: modelKey,
-            title: 'Model',
+            title: '机型',
             boxKey: SettingsBoxKey.model,
             needUpdateUserAgent: true,
             needUpdateXAppDevice: true,
@@ -81,7 +81,7 @@ class _ParamsPageState extends State<ParamsPage> {
           ),
           EdittextItem(
             key: buildKey,
-            title: 'BuildNumber',
+            title: '构建号',
             boxKey: SettingsBoxKey.buildNumber,
             needUpdateUserAgent: true,
             needUpdateXAppDevice: true,
@@ -89,32 +89,32 @@ class _ParamsPageState extends State<ParamsPage> {
           ),
           EdittextItem(
             key: sdkKey,
-            title: 'SDK INT',
+            title: 'SDK版本',
             boxKey: SettingsBoxKey.sdkInt,
           ),
           EdittextItem(
             key: androidKey,
-            title: 'Android Version',
+            title: '安卓版本',
             boxKey: SettingsBoxKey.androidVersion,
             needUpdateUserAgent: true,
             onChanged: _paramsController.onChanged,
           ),
           Obx(
             () => ListTile(
-              title: const Text('User Angent'),
+              title: const Text('用户代理'),
               subtitle: Text(_paramsController.userAgent.value),
               onTap: () => Utils.copyText(_paramsController.userAgent.value),
             ),
           ),
           Obx(
             () => ListTile(
-              title: const Text('X-App-Device'),
+              title: const Text('X-App设备'),
               subtitle: Text(_paramsController.xAppDevice.value),
               onTap: () => Utils.copyText(_paramsController.xAppDevice.value),
             ),
           ),
           ListTile(
-            title: const Text('Regenerate Params'),
+            title: const Text('生成随机参数'),
             onTap: () async {
               await GStorage.regenerateParams();
               manufacturerKey.currentState?.updateValue();

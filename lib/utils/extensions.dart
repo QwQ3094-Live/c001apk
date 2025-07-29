@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+// import 'package:url_launcher/url_launcher_string.dart';
 
 extension ScrollControllerExt on ScrollController {
   void animToTop() {
@@ -137,13 +137,13 @@ extension NullableStringExt on String? {
     if (isNullOrBlank) {
       return '内容为空，取消操作'.toast();
     }
-    Future doOtherAction() async {
-      if (await canLaunchUrlString(this!)) {
-        await launchUrlString(this!, mode: LaunchMode.externalApplication);
-      } else {
-        '未找到可打开应用'.toast();
-      }
-    }
+    // Future doOtherAction() async {
+    //   if (await canLaunchUrlString(this!)) {
+    //     await launchUrlString(this!, mode: LaunchMode.externalApplication);
+    //   } else {
+    //     '未找到可打开应用'.toast();
+    //   }
+    // }
 
     // await FlutterClipboard.copy(this!);
     // if (Platform.isAndroid) {
@@ -176,7 +176,7 @@ extension NullableStringExt on String? {
     if (isNullOrBlank) {
       return '内容为空，取消操作'.toast();
     }
-    Share.share(this!);
+    SharePlus.instance.share(ShareParams(text: this!));
     // FlutterClipboard.copy(this!).then((_) => '尝试分享，并复制到剪切板'.toast());
   }
 }
@@ -235,10 +235,7 @@ extension HexColor on Color {
 
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
   String toHex({bool leadingHashSign = true}) => '${leadingHashSign ? '#' : ''}'
-      '${alpha.toRadixString(16).padLeft(2, '0')}'
-      '${red.toRadixString(16).padLeft(2, '0')}'
-      '${green.toRadixString(16).padLeft(2, '0')}'
-      '${blue.toRadixString(16).padLeft(2, '0')}';
+      '${toARGB32().toRadixString(16).padLeft(8, '0')}';
 }
 
 const SystemUiOverlayStyle lightSystemUiOverlayStyle = SystemUiOverlayStyle(
@@ -309,13 +306,4 @@ extension ThemeDataExt on ThemeData {
   Color get primary => colorScheme.primary;
 
   Color get secondary => colorScheme.secondary;
-}
-
-extension StateExt on State {
-  void setSafeState(VoidCallback cb) {
-    if (mounted) {
-      // ignore: invalid_use_xof_protected_member
-      setState(cb);
-    }
-  }
 }

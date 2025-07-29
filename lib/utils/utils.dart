@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import "package:flutter/foundation.dart";
 import 'package:flutter/services.dart';
+import "package:flutter/widgets.dart";
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
@@ -18,6 +17,7 @@ import '../constants/constants.dart';
 import '../logic/network/network_repo.dart';
 import '../pages/ffflist/ffflist_page.dart' show FFFListType;
 import '../utils/extensions.dart';
+import '../utils/cache_util.dart';
 import '../utils/storage_util.dart';
 
 // ignore: constant_identifier_names
@@ -30,6 +30,14 @@ class Utils {
 
   static bool isDesktop =
       Platform.isMacOS || Platform.isLinux || Platform.isWindows;
+
+  static bool isPortrait(BuildContext context) {
+    return MediaQuery.sizeOf(context).aspectRatio <= 1.0;
+  }
+
+  static bool isWideLandscape(BuildContext context) {
+    return MediaQuery.sizeOf(context).aspectRatio > 1.25;
+  }
 
   static String getFollowTitle(int index) {
     return switch (index) {
@@ -52,11 +60,11 @@ class Utils {
     };
   }
 
-  static String getShareUrl(String id, ShareType type) {
-    return 'https://www.coolapk1s.com/${type.name}/$id';
+  static Uri getShareUri(String id, ShareType type) {
+    return Uri.https('www.coolapk1s.com', '${type.name}/$id');
   }
 
-  static void report(dynamic id, ReportType reportType) {
+  static void report(String id, ReportType reportType) {
     String c = reportType == ReportType.User ? 'user' : 'feed';
     String type = switch (reportType) {
       ReportType.Feed => '&type=feed',
@@ -79,12 +87,12 @@ class Utils {
     SmartDialog.showLoading();
     var response = await Dio()
         .get(url, options: Options(responseType: ResponseType.bytes));
-    final temp = await getTemporaryDirectory();
+    final temp = await CacheManage.getAppTempDirectory();
     SmartDialog.dismiss();
     final String imgName = url.split('/').last;
     var path = '${temp.path}/$imgName';
     File(path).writeAsBytesSync(response.data);
-    Share.shareXFiles([XFile(path)], subject: url);
+    SharePlus.instance.share(ShareParams(files: [XFile(path)], subject: url));
   }
 
   static void copyText(String text) {
@@ -292,7 +300,7 @@ class Utils {
   //   );
   // }
 
-  static launchURL(String url) async {
+  static void launchURL(String url) async {
     try {
       final Uri uri = Uri.parse(url);
       if (!await launchUrl(uri)) {
@@ -303,13 +311,7 @@ class Utils {
     }
   }
 
-  static String numFormat(dynamic number) {
-    if (number == null) {
-      return '0';
-    }
-    if (number is String) {
-      return number;
-    }
+  static String numFormat(num number) {
     final String res = (number / 10000).toString();
     if (int.parse(res.split('.')[0]) >= 1) {
       return '${(number / 10000).toStringAsFixed(1)}万';
@@ -318,11 +320,8 @@ class Utils {
     }
   }
 
-  static String timeFormat(dynamic time) {
+  static String timeFormat(int time) {
     // 1小时内
-    if (time is String && time.contains(':')) {
-      return time;
-    }
     if (time < 3600) {
       if (time == 0) {
         return '00:00';
@@ -343,7 +342,7 @@ class Utils {
   }
 
   // 完全相对时间显示
-  static String formatTimestampToRelativeTime(timeStamp) {
+  static String formatTimestampToRelativeTime(int timeStamp) {
     var difference = DateTime.now()
         .difference(DateTime.fromMillisecondsSinceEpoch(timeStamp * 1000));
 
@@ -357,14 +356,16 @@ class Utils {
       return '${difference.inHours}小时前';
     } else if (difference.inMinutes > 0) {
       return '${difference.inMinutes}分钟前';
+    } else if (difference.inSeconds > 0) {
+      return '${difference.inSeconds}秒前';
     } else {
       return '刚刚';
     }
   }
 
   // 时间显示，刚刚，x分钟前
-  static String dateFormat(timeStamp, {formatType = 'list'}) {
-    if (timeStamp == 0 || timeStamp == null || timeStamp == '') {
+  static String dateFormat(int timeStamp, {String formatType = 'list'}) {
+    if (timeStamp == 0) {
       return '';
     }
     // 当前时间
@@ -384,8 +385,10 @@ class Utils {
           formatType: formatType);
     }
     debugPrint('distance: $distance');
-    if (distance <= 60) {
+    if (distance == 0) {
       return '刚刚';
+    } else if (distance < 60) {
+      return '$distance秒前';
     } else if (distance <= 3600) {
       return '${(distance / 60).floor()}分钟前';
     } else if (distance <= 43200) {
@@ -416,25 +419,20 @@ class Utils {
     String timeStr =
         (DateTime.fromMillisecondsSinceEpoch(timestamp * 1000)).toString();
 
-    dynamic dateArr = timeStr.split(' ')[0];
-    dynamic timeArr = timeStr.split(' ')[1];
+    var dateArr = timeStr.split(' ')[0];
+    var timeArr = timeStr.split(' ')[1];
 
-    String YY = dateArr.split('-')[0];
-    String MM = dateArr.split('-')[1];
-    String DD = dateArr.split('-')[2];
+    var [year, month, day] = dateArr.split('-');
+    var [hour, minute, second] = timeArr.split(':');
 
-    String hh = timeArr.split(':')[0];
-    String mm = timeArr.split(':')[1];
-    String ss = timeArr.split(':')[2];
-
-    ss = ss.split('.')[0];
+    second = second.split('.')[0];
 
     // 去除0开头
     if (toInt) {
-      MM = (int.parse(MM)).toString();
-      DD = (int.parse(DD)).toString();
-      hh = (int.parse(hh)).toString();
-      mm = (int.parse(mm)).toString();
+      month = int.parse(month).toString();
+      day = int.parse(day).toString();
+      hour = int.parse(hour).toString();
+      minute = int.parse(minute).toString();
     }
 
     if (date == null) {
@@ -446,23 +444,23 @@ class Utils {
     // }
 
     date = date
-        .replaceAll('YY', YY)
-        .replaceAll('MM', MM)
-        .replaceAll('DD', DD)
-        .replaceAll('hh', hh)
-        .replaceAll('mm', mm)
-        .replaceAll('ss', ss);
-    if (int.parse(YY) == DateTime.now().year &&
-        int.parse(MM) == DateTime.now().month) {
-      // 当天
-      if (int.parse(DD) == DateTime.now().day) {
-        return '今天';
-      }
+        .replaceAll('YY', year)
+        .replaceAll('MM', month)
+        .replaceAll('DD', day)
+        .replaceAll('hh', hour)
+        .replaceAll('mm', minute)
+        .replaceAll('ss', second);
+
+    if (int.parse(year) == DateTime.now().year &&
+        int.parse(month) == DateTime.now().month &&
+        int.parse(day) == DateTime.now().day) {
+      return '今天';
     }
+
     return date;
   }
 
-  static String makeHeroTag(v) {
+  static String makeHeroTag(dynamic v) {
     return v.toString() + random.nextInt(9999).toString();
   }
 
@@ -515,7 +513,7 @@ class Utils {
   }
 
   // 版本对比
-  static bool needUpdate(localVersion, remoteVersion) {
+  static bool needUpdate(String localVersion, String remoteVersion) {
     List<String> localVersionList = localVersion.split('.');
     List<String> remoteVersionList = remoteVersion.split('v')[1].split('.');
     for (int i = 0; i < localVersionList.length; i++) {
@@ -531,7 +529,7 @@ class Utils {
   }
 
   // 时间戳转时间
-  static tampToSeektime(number) {
+  static String stampToSeektime(int number) {
     int hours = number ~/ 60;
     int minutes = number % 60;
 

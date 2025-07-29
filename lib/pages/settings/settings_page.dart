@@ -62,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage>
     super.build(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: const Text('设置'),
         actions: [
           PopupMenuButton(
             onSelected: (SettingsMenuItem item) {
@@ -97,7 +97,7 @@ class _SettingsPageState extends State<SettingsPage>
           const ItemTitle(title: Constants.APP_NAME),
           const EdittextItem(
             icon: Icons.smartphone,
-            title: 'SZLM ID',
+            title: '数字联盟ID',
             boxKey: SettingsBoxKey.szlmId,
             needUpdateXAppDevice: true,
           ),
@@ -109,7 +109,7 @@ class _SettingsPageState extends State<SettingsPage>
           // Theme
           ListTile(
             title: Text(
-              'Theme',
+              '主题',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
               ),
@@ -117,27 +117,29 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           const SwitchItem(
             icon: Icons.palette_outlined,
-            title: 'Dynamic Theme',
+            title: '动态主题',
             boxKey: SettingsBoxKey.useMaterial,
             defaultValue: true,
             forceAppUpdate: true,
           ),
-          DropDownMenuItem(
-            icon: Icons.format_color_fill,
-            title: 'Theme Color',
-            boxKey: SettingsBoxKey.staticColor,
-            items: Constants.themeType
-                .map((type) => DropdownMenuItem<int>(
-                      enabled: !GStorage.useMaterial,
-                      value: Constants.themeType.indexOf(type),
-                      child: Text(type),
-                    ))
-                .toList(),
-            forceAppUpdate: true,
+          Visibility(
+            visible: !GStorage.useMaterial,
+            child: DropDownMenuItem(
+              icon: Icons.format_color_fill,
+              title: '主题颜色',
+              boxKey: SettingsBoxKey.staticColor,
+              items: Constants.themeType
+                  .map((type) => DropdownMenuItem<int>(
+                        value: Constants.themeType.indexOf(type),
+                        child: Text(type),
+                      ))
+                  .toList(),
+              forceAppUpdate: true,
+            ),
           ),
           const DropDownMenuItem(
             icon: Icons.dark_mode_outlined,
-            title: 'Dark Mode',
+            title: '夜间模式',
             boxKey: SettingsBoxKey.selectedTheme,
             items: [
               DropdownMenuItem<int>(
@@ -150,7 +152,7 @@ class _SettingsPageState extends State<SettingsPage>
               ),
               DropdownMenuItem<int>(
                 value: 0,
-                child: Text('Follow System'),
+                child: Text('跟随系统'),
               ),
             ],
             forceAppUpdate: true,
@@ -158,14 +160,14 @@ class _SettingsPageState extends State<SettingsPage>
           // Display
           ListTile(
             title: Text(
-              'Display',
+              '显示',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
           ListTile(
-            title: const Text('User Blacklist'),
+            title: const Text('用户黑名单'),
             leading: const Icon(Icons.block),
             onTap: () => Get.toNamed(
               '/blacklist/',
@@ -173,7 +175,7 @@ class _SettingsPageState extends State<SettingsPage>
             ),
           ),
           ListTile(
-            title: const Text('Topic Blacklist'),
+            title: const Text('话题黑名单'),
             leading: const Icon(Icons.block),
             onTap: () => Get.toNamed(
               '/blacklist/',
@@ -181,7 +183,7 @@ class _SettingsPageState extends State<SettingsPage>
             ),
           ),
           ListTile(
-            title: const Text('Font Scale'),
+            title: const Text('字体比例'),
             subtitle: Text('${GStorage.fontScale.toStringAsFixed(2)}x'),
             leading: const Icon(Icons.text_fields),
             onTap: () => showDialog<void>(
@@ -197,7 +199,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           DropDownMenuItem(
             icon: Icons.add_circle_outline_outlined,
-            title: 'Follow Type',
+            title: '关注类型',
             boxKey: SettingsBoxKey.followType,
             items: FollowType.values
                 .map((type) => DropdownMenuItem<int>(
@@ -227,7 +229,7 @@ class _SettingsPageState extends State<SettingsPage>
           */
           const SwitchItem(
             icon: Icons.travel_explore,
-            title: 'Open In Browser',
+            title: '外部浏览器打开',
             boxKey: SettingsBoxKey.openInBrowser,
             defaultValue: false,
           ),
@@ -241,34 +243,34 @@ class _SettingsPageState extends State<SettingsPage>
           */
           const SwitchItem(
             icon: Icons.history,
-            title: 'Record History',
+            title: '历史记录',
             boxKey: SettingsBoxKey.recordHistory,
             defaultValue: true,
           ),
           const SwitchItem(
             icon: Icons.emoji_emotions_outlined,
-            title: 'Show Emoji',
+            title: '显示表情',
             boxKey: SettingsBoxKey.showEmoji,
             defaultValue: true,
           ),
           if (Platform.isAndroid)
             const SwitchItem(
               icon: Icons.system_update,
-              title: 'Check Update',
+              title: '检查更新',
               boxKey: SettingsBoxKey.checkUpdate,
               defaultValue: true,
             ),
           // Others
           ListTile(
             title: Text(
-              'Others',
+              '其它',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
           ListTile(
-            title: const Text('About'),
+            title: const Text('关于'),
             subtitle: Text(_version),
             leading: const Icon(Icons.all_inclusive),
             onTap: () =>
@@ -276,7 +278,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           Obx(
             () => ListTile(
-              title: const Text('Clear Cache'),
+              title: const Text('清楚缓存'),
               subtitle: _settingsController.cacheSize.value.isNotEmpty
                   ? Text(_settingsController.cacheSize.value)
                   : null,

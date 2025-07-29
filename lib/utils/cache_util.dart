@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'utils.dart';
+
 /// From Pilipala
 class CacheManage {
   CacheManage._internal();
@@ -10,6 +12,13 @@ class CacheManage {
   static final CacheManage cacheManage = CacheManage._internal();
 
   factory CacheManage() => cacheManage;
+
+  static Future<Directory> getAppTempDirectory() async {
+    Directory systemTempDirectory = await getTemporaryDirectory();
+    return Utils.isDesktop
+        ? Directory('${systemTempDirectory.path}/c001apk')
+        : systemTempDirectory;
+  }
 
   // 获取缓存目录
   Future<String> loadApplicationCache() async {
@@ -20,14 +29,17 @@ class CacheManage {
 
     // 缓存大小
     double cacheSize = 0;
+
     // cached_network_image directory
-    Directory tempDirectory = await getTemporaryDirectory();
+    Directory appTempDirectory = await getAppTempDirectory();
+    appTempDirectory.create();
+
     // get_storage directory
     Directory docDirectory = await getApplicationDocumentsDirectory();
 
     // 获取缓存大小
-    if (tempDirectory.existsSync()) {
-      double value = await getTotalSizeOfFilesInDir(tempDirectory);
+    if (appTempDirectory.existsSync()) {
+      double value = await getTotalSizeOfFilesInDir(appTempDirectory);
       cacheSize += value;
     }
 
@@ -100,25 +112,9 @@ class CacheManage {
 
   // 清除 Library/Caches 目录及文件缓存
   Future clearLibraryCache() async {
-    var appDocDir = await getTemporaryDirectory();
+    var appDocDir = await getAppTempDirectory();
     if (appDocDir.existsSync()) {
-      // await appDocDir.delete(recursive: true);
-      final List<FileSystemEntity> children =
-          appDocDir.listSync(recursive: false);
-      for (final FileSystemEntity file in children) {
-        await file.delete(recursive: true);
-      }
+      await appDocDir.delete(recursive: true);
     }
-  }
-
-  /// 递归方式删除目录及文件
-  Future deleteDirectory(FileSystemEntity file) async {
-    if (file is Directory) {
-      final List<FileSystemEntity> children = file.listSync();
-      for (final FileSystemEntity child in children) {
-        await deleteDirectory(child);
-      }
-    }
-    await file.delete();
   }
 }

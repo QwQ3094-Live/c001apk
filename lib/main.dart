@@ -104,6 +104,11 @@ class C001APKAPP extends StatelessWidget {
             contentTextStyle: TextStyle(color: lightColorScheme.secondary),
             elevation: 20,
           ),
+          textTheme: TextTheme(
+            bodyLarge: TextStyle(fontWeight: FontWeight.w500), // 中等粗细
+            bodyMedium: TextStyle(fontWeight: FontWeight.normal),
+      // 可以定义其他文本样式...
+          ),
           pageTransitionsTheme: const PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{
               TargetPlatform.android: ZoomPageTransitionsBuilder(
